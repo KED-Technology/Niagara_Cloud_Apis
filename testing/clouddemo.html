@@ -1,0 +1,472 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niagara Cloud Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    header {
+      background: #0077cc;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .last-updated {
+      font-style: italic;
+      opacity: 0.9;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .refresh-btn {
+      padding: 8px 16px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+    }
+    
+    .refresh-btn:hover {
+      background-color: #005fa3;
+    }
+    
+    .auto-refresh {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #4caf50;
+    }
+    
+    .status-dot.offline {
+      background-color: #f44336;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #495057;
+      position: sticky;
+      top: 0;
+    }
+    
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .sensor-value {
+      font-weight: 600;
+      color: #0077cc;
+    }
+    
+    .status-on {
+      color: #4caf50;
+      font-weight: bold;
+    }
+    
+    .status-off {
+      color: #f44336;
+      font-weight: bold;
+    }
+    
+    .status-overridden {
+      color: #ff9800;
+      font-weight: bold;
+    }
+    
+    .status-ok {
+      color: #4caf50;
+      font-weight: bold;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #f8f9fa;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      th, td {
+        padding: 10px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+    }
+    
+    /* Animation for value updates */
+    @keyframes highlight {
+      0% { background-color: #ffffcc; }
+      100% { background-color: transparent; }
+    }
+    
+    .updated {
+      animation: highlight 1s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Niagara Cloud Dashboard</h1>
+      <div class="last-updated" id="lastUpdated">Last updated: --</div>
+    </header>
+    
+    <div class="controls">
+      <button class="refresh-btn" id="refreshBtn">
+        <i class="fas fa-sync-alt"></i> Refresh Data
+      </button>
+      <div class="auto-refresh">
+        <input type="checkbox" id="autoRefresh" checked>
+        <label for="autoRefresh">Auto-refresh every 1 seconds</label>
+      </div>
+      <div class="status-indicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="connectionStatus">Connected</span>
+      </div>
+    </div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Point</th>
+          <th>Live Value</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Temperature Sensor</td>
+          <td id="tempValue" class="sensor-value">--</td>
+          <td id="tempStatus">--</td>
+        </tr>
+        <tr><td>Humidity Sensor</td><td id="humidityValue" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>Pressure Sensor</td><td id="pressureValue" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>Energy Sensor</td><td id="energyValue" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>Flow Sensor</td><td id="flowValue" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>CO₂ Sensor</td><td id="co2Value" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>Voltage Sensor</td><td id="voltageValue" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>Current Sensor</td><td id="currentValue" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>Power Sensor</td><td id="powerValue" class="sensor-value">--</td><td>Simulated</td></tr>
+        <tr><td>Chiller Status</td><td id="chillerValue" class="sensor-value">--</td><td>Simulated</td></tr>
+      </tbody>
+    </table>
+    
+    <footer>
+      <p>Niagara Cloud Dashboard &copy; 2023 | Data fetched from Niagara Cloud API</p>
+    </footer>
+  </div>
+
+
+<script>
+  async function fetchDashboardData() {
+    try {
+      const res = await fetch('/clouddemo-data');
+      const data = await res.json();
+
+      // Update last updated
+      document.getElementById('lastUpdated').textContent =
+        'Last updated: ' + new Date().toLocaleTimeString();
+
+      // Update temperature sensor value
+      if (data.temperature) {
+        const tempEl = document.getElementById('tempValue');
+        const statusEl = document.getElementById('tempStatus');
+
+        tempEl.textContent = data.temperature.value.toFixed(2) + ' °C';
+        statusEl.textContent = data.temperature.status;
+
+        // Highlight animation on update
+        tempEl.classList.add('updated');
+        setTimeout(() => tempEl.classList.remove('updated'), 1000);
+
+        // Update status color
+        statusEl.className = '';
+        if (data.temperature.status === 'Normal') statusEl.classList.add('status-ok');
+        else if (data.temperature.status === 'Overridden') statusEl.classList.add('status-overridden');
+        else statusEl.classList.add('status-off');
+      }
+
+      // Connection indicator
+      document.getElementById('statusDot').classList.remove('offline');
+      document.getElementById('connectionStatus').textContent = 'Connected';
+
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      document.getElementById('statusDot').classList.add('offline');
+      document.getElementById('connectionStatus').textContent = 'Disconnected';
+    }
+  }
+
+  // Manual refresh
+  document.getElementById('refreshBtn').addEventListener('click', fetchDashboardData);
+
+  // Auto-refresh every 10s
+  setInterval(() => {
+    if (document.getElementById('autoRefresh').checked) {
+      fetchDashboardData();
+    }
+  }, 1000);
+
+  // Initial fetch
+  fetchDashboardData();
+</script>
+
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Niagara Cloud Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
+    header { background: #004d80; color: #fff; padding: 10px 20px; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #f0f0f0; }
+    .sensor-value { font-weight: bold; }
+    #canvas { max-width: 100%; height: 300px; margin-top: 20px; background: #fff; border-radius: 8px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Niagara Cloud Dashboard</h1>
+    <div id="lastUpdated">Last updated: --</div>
+  </header>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Point</th>
+        <th>Live Value</th>
+      </tr>
+    </thead>
+    <tbody id="sensorTable"></tbody>
+  </table>
+
+  <div id="canvas"></div>
+  <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/themes/dark.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/lang/es_ES.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
+
+      <script src="/js/demo.js"></script>
+  <script>
+    const tableBody = document.getElementById("sensorTable");
+    const lastUpdated = document.getElementById("lastUpdated");
+//      let lineChart; 
+//  async function lineChart4(cloudId) {
+//     try {
+//         const response = await fetch(`/api/telemetry/${cloudId}`);
+//         const data = await response.json();
+//         if (!data || !data.length) return;
+
+//         am4core.useTheme(am4themes_animated);
+
+//         linechart = am4core.create("canvas", am4charts.XYChart);
+//         linechart.data = data.map(d => ({ time: d.time, value: d.value }));
+
+//         const categoryAxis = linechart.xAxes.push(new am4charts.CategoryAxis());
+//         categoryAxis.dataFields.category = "time";
+//         categoryAxis.renderer.labels.template.rotation = 315;
+//         categoryAxis.renderer.minGridDistance = 1;
+
+//         const valueAxis = linechart.yAxes.push(new am4charts.ValueAxis());
+
+//         const lineSeries = linechart.series.push(new am4charts.LineSeries());
+//         lineSeries.dataFields.valueY = "value";
+//         lineSeries.dataFields.categoryX = "time";
+//         lineSeries.strokeWidth = 2;
+//         lineSeries.stroke = am4core.color("#FC4100");
+//         lineSeries.tooltipText = "{valueY}";
+//         linechart.cursor = new am4charts.XYCursor();
+
+//         linechart.logo.disabled = true;
+
+//     } catch (err) {
+//         console.error("❌ Error in lineChart4:", err);
+//     }
+// }
+
+// let lineChart;
+
+// async function lineChart4(cloudId) {
+//     try {
+//         console.log("➡️ Fetching telemetry for Cloud ID:", cloudId);
+//         const response = await fetch(`/api/telemetry/${cloudId}`);
+//         console.log("Raw Niagara response:", response.data);
+
+//         console.log("Raw Niagara response:", response.data);
+
+//         const data = await response.json();
+//         console.log("📊 Telemetry data received:", data);
+
+//         console.log("📊 Telemetry data received:", data);
+
+//         if (!data || !data.length) {
+//             console.warn("⚠️ No data received for chart.");
+//             return;
+//         }
+
+//         am4core.useTheme(am4themes_animated);
+//         console.log("🎨 amCharts theme applied.");
+
+//         lineChart = am4core.create("canvas", am4charts.XYChart);
+//         console.log("🖼️ lineChart created:", lineChart);
+//         console.log("Container clientHeight:", document.getElementById("canvas").clientHeight);
+// console.log("Container clientWidth:", document.getElementById("canvas").clientWidth);
+
+
+//         lineChart.data = data.map(d => ({ time: d.time, value: d.value }));
+//         console.log("📈 lineChart data set:", lineChart.data);
+
+//         const categoryAxis = lineChart.xAxes.push(new am4charts.CategoryAxis());
+//         categoryAxis.dataFields.category = "time";
+//         categoryAxis.renderer.labels.template.rotation = 315;
+//         categoryAxis.renderer.minGridDistance = 1;
+
+//         const valueAxis = lineChart.yAxes.push(new am4charts.ValueAxis());
+
+//         const lineSeries = lineChart.series.push(new am4charts.LineSeries());
+//         lineSeries.dataFields.valueY = "value";
+//         lineSeries.dataFields.categoryX = "time";
+//         lineSeries.strokeWidth = 2;
+//         lineSeries.stroke = am4core.color("#FC4100");
+//         lineSeries.tooltipText = "{valueY}";
+//         lineChart.cursor = new am4charts.XYCursor();
+
+//         lineChart.logo.disabled = true;
+//         console.log("✅ lineChart initialized successfully.");
+
+//     } catch (err) {
+//         console.error("❌ Error in lineChart4:", err);
+//     }
+// }
+
+
+
+
+
+// document.addEventListener("DOMContentLoaded", () => {
+//     lineChart4("71b14c7c-d724-4692-b4a8-46e3c4f01d6a");
+// });
+    // SSE connection
+   
+    document.addEventListener("DOMContentLoaded", () => {
+    createChart("93572754-b3fc-4788-880a-4ddd9503c044", "canvas", "#007BFF");
+});
+
+    const evtSource = new EventSource("/api/stream");
+
+    evtSource.onmessage = (event) => {
+      const values = JSON.parse(event.data);
+      console.log("🔹 SSE update received:", values);
+
+
+      // Update table
+      tableBody.innerHTML = "";
+      Object.entries(values).forEach(([name, value]) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${name}</td><td class="sensor-value">${value}</td>`;
+        tableBody.appendChild(row);
+      });
+
+      // Update chart (use first sensor as example)
+      // const firstSensorValue = Object.values(values)[0];
+      // const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      //  lineChart.addData({ time: now, value: firstSensorValue }, 1);
+      // lineChart.data.datasets[0].data.push(firstSensorValue);
+
+      // // Keep last 20 points only
+      // if (lineChart.data.labels.length > 20) {
+      //   lineChart.data.labels.shift();
+      //   lineChart.data.datasets[0].data.shift();
+      // }
+
+      // lineChart.update();
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  lastUpdated.textContent = "Last updated: " + now;
+    };
+  </script>
+</body>
+</html>
+
+

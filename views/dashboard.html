@@ -1213,40 +1213,76 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // ==================== LINE CHART ====================
-  async function createPowerChart(data) {
-    return new Promise((resolve) => {
-      am4core.ready(function () {
-        am4core.useTheme(am4themes_animated);
-        const chart = am4core.create("chartdiv2", am4charts.XYChart);
-         chart.data = data;
-      console.log("Raw Power Data:", chart.data);
+  // async function createPowerChart(data) {
+  //   return new Promise((resolve) => {
+  //     am4core.ready(function () {
+  //       am4core.useTheme(am4themes_animated);
+  //       const chart = am4core.create("chartdiv2", am4charts.XYChart);
+  //        chart.data = data;
+  //     console.log("Raw Power Data:", chart.data);
         
-        let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-        categoryAxis.dataFields.category = "time";
-        categoryAxis.renderer.labels.template.fill = am4core.color("#000000");
-        categoryAxis.renderer.labels.template.rotation = 315;
-        categoryAxis.renderer.minGridDistance = 1;
-        categoryAxis.renderer.labels.template.fontSize = 10;
+  //       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+  //       categoryAxis.dataFields.category = "time";
+  //       categoryAxis.renderer.labels.template.fill = am4core.color("#000000");
+  //       categoryAxis.renderer.labels.template.rotation = 315;
+  //       categoryAxis.renderer.minGridDistance = 1;
+  //       categoryAxis.renderer.labels.template.fontSize = 10;
 
-        let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-        valueAxis.renderer.labels.template.fill = am4core.color("#000000");
+  //       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  //       valueAxis.renderer.labels.template.fill = am4core.color("#000000");
 
-        let lineSeries = chart.series.push(new am4charts.LineSeries());
-        lineSeries.dataFields.valueY = "value";
-        lineSeries.dataFields.categoryX = "time";
-        lineSeries.strokeWidth = 2;
-        lineSeries.stroke = am4core.color("#FC4100");
+  //       let lineSeries = chart.series.push(new am4charts.LineSeries());
+  //       lineSeries.dataFields.valueY = "value";
+  //       lineSeries.dataFields.categoryX = "time";
+  //       lineSeries.strokeWidth = 2;
+  //       lineSeries.stroke = am4core.color("#FC4100");
 
-        chart.cursor = new am4charts.XYCursor();
-        chart.cursor.behavior = "zoomXY";
-        chart.logo.disabled = true;
+  //       chart.cursor = new am4charts.XYCursor();
+  //       chart.cursor.behavior = "zoomXY";
+  //       chart.logo.disabled = true;
         
-        resolve(chart);
-      });
-    });
-  }
+  //       resolve(chart);
+  //     });
+  //   });
+  // }
 
   // ==================== OCCUPANCY CHART ====================
+  
+  async function createPowerChart(data) {
+  return new Promise((resolve) => {
+    am4core.ready(function () {
+      am4core.useTheme(am4themes_animated);
+      const chart = am4core.create("chartdiv2", am4charts.XYChart);
+      
+      // Use the real data from the API response
+      chart.data = data;
+      console.log("Real Power Data:", chart.data);
+      
+      let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+      categoryAxis.dataFields.category = "time";
+      categoryAxis.renderer.labels.template.fill = am4core.color("#000000");
+      categoryAxis.renderer.labels.template.rotation = 315;
+      categoryAxis.renderer.minGridDistance = 1;
+      categoryAxis.renderer.labels.template.fontSize = 10;
+
+      let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.renderer.labels.template.fill = am4core.color("#000000");
+
+      let lineSeries = chart.series.push(new am4charts.LineSeries());
+      lineSeries.dataFields.valueY = "value";
+      lineSeries.dataFields.categoryX = "time";
+      lineSeries.strokeWidth = 2;
+      lineSeries.stroke = am4core.color("#FC4100");
+
+      chart.cursor = new am4charts.XYCursor();
+      chart.cursor.behavior = "zoomXY";
+      chart.logo.disabled = true;
+      
+      resolve(chart);
+    });
+  });
+}
+  
   async function createOccupancyChart(data) {
     const options = {
       series: [data.value],
@@ -1395,6 +1431,86 @@ document.addEventListener('DOMContentLoaded', async function () {
   return chart;
   }
 
+// async function createEPIChart(data) {
+//   try {
+//     if (!data || !Array.isArray(data.percentValues) || !Array.isArray(data.labels)) {
+//       console.error("❌ EPI Data invalid:", data);
+//       return;
+//     }
+
+//     console.log("EPI Data:", data);
+
+//     const chartContainer = document.querySelector("#chartdiv5");
+//     chartContainer.style.position = "relative";
+
+//     const totalValue = (data.totalEPI || 0).toFixed(2);
+
+//     // Add total label
+//     let totalLabel = document.getElementById("epi-total-label");
+//     if (!totalLabel) {
+//       totalLabel = document.createElement('div');
+//       totalLabel.id = "epi-total-label";
+//       chartContainer.appendChild(totalLabel);
+//     }
+//     totalLabel.textContent = `Total EPI: ${totalValue} units`;
+//     totalLabel.style.cssText = `
+//       position: absolute;
+//       right: 10px;
+//       bottom: 10px;
+//       font-size: 16px;
+//       font-weight: bold;
+//       color: #000000;
+//     `;
+
+//     const options = {
+//       series: data.percentValues,
+//       chart: { type: 'donut', height: "100%" },
+//       labels: data.labels,
+//       dataLabels: {
+//         enabled: true,
+//         formatter: function (val, opts) {
+//           const idx = opts.seriesIndex;
+//           return data.percentValues[idx] + " %";
+//         }
+//       },
+//       tooltip: {
+//         y: {
+//           formatter: function (val, opts) {
+//             const idx = opts.seriesIndex;
+//             return data.percentValues[idx] + " %";
+//           }
+//         }
+//       },
+//       plotOptions: {
+//         pie: {
+//           donut: {
+//             size: '60%',
+//             labels: {
+//               show: true,
+//               name: { show: true, formatter: () => 'EPI' },
+//               value: {
+//                 show: true,
+//                 formatter: (val, opts) => data.percentValues[opts.seriesIndex] + " %"
+//               },
+//               total: {
+//                 show: true,
+//                 label: 'Total',
+//                 formatter: () => totalValue + " units"
+//               }
+//             }
+//           }
+//         }
+//       }
+//     };
+
+//     const chart = new ApexCharts(chartContainer, options);
+//     await chart.render();
+//     return chart;
+
+//   } catch (error) {
+//     console.error("❌ Error creating EPI chart:", error);
+//   }
+// }
   // ==================== EPI CHART ====================
   // async function createEPIChart(data) {
   //   try {
@@ -1516,85 +1632,237 @@ document.addEventListener('DOMContentLoaded', async function () {
   //   }
   // }
 
+// async function createEPIChart(data) {
+//   try {
+//     am4core.useTheme(am4themes_animated);
+//     const chart = am4core.create("chartdiv5", am4charts.PieChart);
+
+//     const totalValue = data.totalEPI;
+//       const labels = data.labels;
+//       const unitValues = data.unitValues;
+//       const percentValues = data.percentValues;
+//     // Calculate percentages
+//     chart.data = labels.map((label, index) => {
+//   const rawUnit = unitValues[index] ?? 0;
+//   const rawPercent = percentValues[index] ?? 0;
+
+//   return {
+//     category: label,
+//     value: rawUnit,
+//     percentage: rawPercent,
+//     totalValue: (totalValue ?? 0).toFixed(2)
+//   };
+// });
+
+
+//     // Chart configuration (same as your existing code)
+//     chart.innerRadius = am4core.percent(45);
+//     const pieSeries = chart.series.push(new am4charts.PieSeries());
+//     pieSeries.dataFields.value = "value";
+//     pieSeries.dataFields.category = "category";
+//     pieSeries.colors.list = [
+//       am4core.color("#FFB200"),
+//       am4core.color("#667BC6"),
+//       am4core.color("#D1E9F6")
+//     ];
+//     pieSeries.slices.template.tooltipText = "{category}: {value} units ({percentage}%)";
+//    // Configure labels to appear perfectly centered in slices
+//  pieSeries.labels.template.text = "{percentage}%";
+//     pieSeries.labels.template.radius = am4core.percent(0);
+//     pieSeries.labels.template.fill = am4core.color("#000000");
+//      pieSeries.labels.template.radius = am4core.percent(-25); 
+//     pieSeries.labels.template.fontSize = 14;
+//     pieSeries.labels.template.fontWeight = "bold";
+//     pieSeries.labels.template.horizontalCenter = "middle";
+//     pieSeries.labels.template.verticalCenter = "middle";
+//     pieSeries.labels.template.dx = 0;
+//     pieSeries.labels.template.dy = 0;
+//     pieSeries.ticks.template.disabled = true;
+//     pieSeries.alignLabels = false;
+
+//     // Force positioning
+//     pieSeries.labels.template.adapter.add("dx", () => 0);
+//     pieSeries.labels.template.adapter.add("dy", () => 0);
+//     pieSeries.labels.template.adapter.add("horizontalCenter", () => "middle");
+//     pieSeries.labels.template.adapter.add("verticalCenter", () => "middle");
+//     // Disable default lines
+//     pieSeries.ticks.template.disabled = true;
+
+//     // Add legend (same as your existing code)
+//     chart.legend = new am4charts.Legend();
+//     chart.legend.position = "top";
+//     chart.legend.valueLabels.template.text = "";
+
+//     // Add center label
+//     const labelEpi = chart.seriesContainer.createChild(am4core.Label);
+//     labelEpi.text = "EPI";
+//     labelEpi.horizontalCenter = "middle";
+//     labelEpi.verticalCenter = "middle";
+//     labelEpi.fontSize = 30;
+//     labelEpi.fontWeight = "bold";
+
+//     // Add total label (reference this for later updates)
+//     const labelTotal = chart.seriesContainer.createChild(am4core.Label);
+//     labelTotal.text = `Total EPI: ${totalValue.toFixed(2)} units`;
+//     labelTotal.horizontalCenter = "right";
+//     labelTotal.verticalCenter = "bottom";
+//     labelTotal.fontSize = 16;
+//     labelTotal.fontWeight = "bold";
+//     // labelTotal.name = "totalLabel";
+//     labelTotal.dx = 200;  // Move a little left to adjust positioning
+//     labelTotal.dy = 130;  // Move downward
+//     chart.logo.disabled = true;
+
+//     return chart;
+//   } catch (error) {
+//     console.error("Error creating EPI chart:", error);
+//     return null;
+//   }
+// }
+// async function createEPIChart(data) {
+//   try {
+//     am4core.useTheme(am4themes_animated);
+//     const chart = am4core.create("chartdiv5", am4charts.PieChart);
+
+//     const totalValue = data.totalEPI;
+//     const labels = data.labels;
+//     const unitValues = data.unitValues;
+//     const percentValues = data.percentValues;
+
+//     // Prepare chart data
+//     chart.data = labels.map((label, index) => {
+//       const rawUnit = unitValues[index] ?? 0;
+//       const rawPercent = percentValues[index] ?? 0;
+
+//       return {
+//         category: label,
+//         value: rawUnit,
+//         percentage: rawPercent,
+//         totalValue: (totalValue ?? 0).toFixed(2)
+//       };
+//     });
+
+//     // Chart configuration
+//     chart.innerRadius = am4core.percent(45);
+//     const pieSeries = chart.series.push(new am4charts.PieSeries());
+//     pieSeries.dataFields.value = "value";
+//     pieSeries.dataFields.category = "category";
+//     pieSeries.colors.list = [
+//       am4core.color("#FFB200"),
+//       am4core.color("#667BC6"),
+//       am4core.color("#D1E9F6")
+//     ];
+
+//     // Tooltip without units
+//     pieSeries.slices.template.tooltipText = "{category}: {value} ({percentage}%)";
+
+//     // Labels inside slices
+//     pieSeries.labels.template.text = "{percentage}%";
+//     pieSeries.labels.template.radius = am4core.percent(-25);
+//     pieSeries.labels.template.fill = am4core.color("#000000");
+//     pieSeries.labels.template.fontSize = 14;
+//     pieSeries.labels.template.fontWeight = "bold";
+//     pieSeries.labels.template.horizontalCenter = "middle";
+//     pieSeries.labels.template.verticalCenter = "middle";
+//     pieSeries.labels.template.dx = 0;
+//     pieSeries.labels.template.dy = 0;
+//     pieSeries.ticks.template.disabled = true;
+//     pieSeries.alignLabels = false;
+
+//     // Force positioning
+//     pieSeries.labels.template.adapter.add("dx", () => 0);
+//     pieSeries.labels.template.adapter.add("dy", () => 0);
+//     pieSeries.labels.template.adapter.add("horizontalCenter", () => "middle");
+//     pieSeries.labels.template.adapter.add("verticalCenter", () => "middle");
+
+//     // Add legend
+//     chart.legend = new am4charts.Legend();
+//     chart.legend.position = "top";
+//     chart.legend.valueLabels.template.text = "";
+
+//     // Add center label
+//     const labelEpi = chart.seriesContainer.createChild(am4core.Label);
+//     labelEpi.text = "EPI";
+//     labelEpi.horizontalCenter = "middle";
+//     labelEpi.verticalCenter = "middle";
+//     labelEpi.fontSize = 30;
+//     labelEpi.fontWeight = "bold";
+
+//     // Add total label without units
+//     const labelTotal = chart.seriesContainer.createChild(am4core.Label);
+//     labelTotal.text = `Total EPI: ${totalValue.toFixed(2)}`;
+//     labelTotal.horizontalCenter = "right";
+//     labelTotal.verticalCenter = "bottom";
+//     labelTotal.fontSize = 16;
+//     labelTotal.fontWeight = "bold";
+//     labelTotal.dx = 200;  // adjust positioning
+//     labelTotal.dy = 130;  // move downward
+
+//     chart.logo.disabled = true;
+
+//     return chart;
+//   } catch (error) {
+//     console.error("Error creating EPI chart:", error);
+//     return null;
+//   }
+// }
 async function createEPIChart(data) {
   try {
-    am4core.useTheme(am4themes_animated);
-    const chart = am4core.create("chartdiv5", am4charts.PieChart);
+    console.log("EPI Data (Frontend):", data);
 
-    const totalValue = data.totalEPI;
-      const labels = data.labels;
-      const unitValues = data.unitValues;
-      const percentValues = data.percentValues;
-    // Calculate percentages
-    chart.data = labels.map((label, index) => ({
-      category: label,
-      value: unitValues[index], // Using raw values for slice sizes
-      percentage: percentValues[index].toFixed(1),
-      totalValue: totalValue.toFixed(2)
-    }));
+    const chartContainer = document.querySelector("#chartdiv5");
+    chartContainer.innerHTML = ""; // clear previous chart
+    chartContainer.style.position = "relative";
 
-    // Chart configuration (same as your existing code)
-    chart.innerRadius = am4core.percent(45);
-    const pieSeries = chart.series.push(new am4charts.PieSeries());
-    pieSeries.dataFields.value = "value";
-    pieSeries.dataFields.category = "category";
-    pieSeries.colors.list = [
-      am4core.color("#FFB200"),
-      am4core.color("#667BC6"),
-      am4core.color("#D1E9F6")
-    ];
-    pieSeries.slices.template.tooltipText = "{category}: {value} units ({percentage}%)";
-   // Configure labels to appear perfectly centered in slices
- pieSeries.labels.template.text = "{percentage}%";
-    pieSeries.labels.template.radius = am4core.percent(0);
-    pieSeries.labels.template.fill = am4core.color("#000000");
-     pieSeries.labels.template.radius = am4core.percent(-25); 
-    pieSeries.labels.template.fontSize = 14;
-    pieSeries.labels.template.fontWeight = "bold";
-    pieSeries.labels.template.horizontalCenter = "middle";
-    pieSeries.labels.template.verticalCenter = "middle";
-    pieSeries.labels.template.dx = 0;
-    pieSeries.labels.template.dy = 0;
-    pieSeries.ticks.template.disabled = true;
-    pieSeries.alignLabels = false;
+    const seriesData = data.percentValues; // already percentages (HVAC, UPS, RT&LTG)
+    const totalValue = data.totalEPI.toFixed(2);
 
-    // Force positioning
-    pieSeries.labels.template.adapter.add("dx", () => 0);
-    pieSeries.labels.template.adapter.add("dy", () => 0);
-    pieSeries.labels.template.adapter.add("horizontalCenter", () => "middle");
-    pieSeries.labels.template.adapter.add("verticalCenter", () => "middle");
-    // Disable default lines
-    pieSeries.ticks.template.disabled = true;
+    const options = {
+  series: data.percentValues,   // e.g. [2.55, 5.07, 17.75]
+  chart: { type: 'donut', height: "100%" },
+  labels: data.labels,          // ["HVAC", "UPS", "RT&LTG"]
+  dataLabels: {
+    enabled: true,
+    formatter: function (val, opts) {
+      const seriesIndex = opts.seriesIndex;
+      return data.percentValues[seriesIndex] + " %";   // ✅ show actual Niagara %
+    }
+  },
+  tooltip: {
+    y: {
+      formatter: function (val, opts) {
+        const seriesIndex = opts.seriesIndex;
+        return data.percentValues[seriesIndex] + " %"; // ✅ keep Niagara %
+      }
+    }
+  },
+  plotOptions: {
+    pie: {
+      donut: {
+        size: '60%',
+        labels: {
+          show: true,
+          name: { show: true, formatter: () => 'EPI' },
+          value: {
+            show: true,
+            formatter: (val, opts) => data.percentValues[opts.seriesIndex] + " %"
+          },
+          total: {
+            show: true,
+            label: 'Total',
+            formatter: () => data.totalEPI.toFixed(2) + " units"
+          }
+        }
+      }
+    }
+  }
+};
 
-    // Add legend (same as your existing code)
-    chart.legend = new am4charts.Legend();
-    chart.legend.position = "top";
-    chart.legend.valueLabels.template.text = "";
-
-    // Add center label
-    const labelEpi = chart.seriesContainer.createChild(am4core.Label);
-    labelEpi.text = "EPI";
-    labelEpi.horizontalCenter = "middle";
-    labelEpi.verticalCenter = "middle";
-    labelEpi.fontSize = 30;
-    labelEpi.fontWeight = "bold";
-
-    // Add total label (reference this for later updates)
-    const labelTotal = chart.seriesContainer.createChild(am4core.Label);
-    labelTotal.text = `Total EPI: ${totalValue.toFixed(2)} units`;
-    labelTotal.horizontalCenter = "right";
-    labelTotal.verticalCenter = "bottom";
-    labelTotal.fontSize = 16;
-    labelTotal.fontWeight = "bold";
-    // labelTotal.name = "totalLabel";
-    labelTotal.dx = 200;  // Move a little left to adjust positioning
-    labelTotal.dy = 130;  // Move downward
-    chart.logo.disabled = true;
-
+    const chart = new ApexCharts(chartContainer, options);
+    await chart.render();
     return chart;
   } catch (error) {
-    console.error("Error creating EPI chart:", error);
-    return null;
+    console.error("❌ Error creating EPI chart:", error);
   }
 }
 
@@ -1771,10 +2039,17 @@ async function refreshAllCharts(newData) {
       });
     }
     
-    if (chartInstances.powerChart) {
-      chartInstances.powerChart.data = powerData;
-      chartInstances.powerChart.invalidateData();
-    }
+    // In refreshAllCharts function - fix for water chart
+if (chartInstances.waterChart) {
+  chartInstances.waterChart.data = water;
+  chartInstances.waterChart.invalidateData();
+  // Also need to update the legend
+  chartInstances.waterChart.legend.data = water.map(item => ({
+    country: item.country,
+    litres: item.litres
+  }));
+  chartInstances.waterChart.legend.invalidateData();
+}
     
     if (chartInstances.occupancyChart) {
       chartInstances.occupancyChart.updateSeries([occupancy.value]);
@@ -1811,40 +2086,65 @@ if (chartInstances.aqiCharts) {
   }
 }
     
-    if (chartInstances.epiChart) {
-      // AMCharts update logic
-      const totalValue = newData.epi.totalEPI;
-      const labels = newData.epi.labels;
-      const unitValues = newData.epi.unitValues;
-      const percentValues = newData.epi.percentValues;
+    // if (chartInstances.epiChart) {
+    //   // AMCharts update logic
+    //   const totalValue = newData.epi.totalEPI;
+    //   const labels = newData.epi.labels;
+    //   const unitValues = newData.epi.unitValues;
+    //   const percentValues = newData.epi.percentValues;
       
-      // Calculate percentages
-      chartInstances.epiChart.data = labels.map((label, index) => ({
-        category: label,
-        value: unitValues[index],
-        percentage:  percentValues[index].toFixed(1),
-      }));
+    //   // Calculate percentages
+    //   chartInstances.epiChart.data = labels.map((label, index) => ({
+    //     category: label,
+    //     value: unitValues[index],
+    //     percentage:  percentValues[index].toFixed(1),
+    //   }));
       
-      // Update total label - robust approach
-      const children = chartInstances.epiChart.seriesContainer.children;
-      let totalLabel;
+    //   // Update total label - robust approach
+    //   const children = chartInstances.epiChart.seriesContainer.children;
+    //   let totalLabel;
       
-      for (let i = 0; i < children.length; i++) {
-        const child = children.getIndex(i);
-        if (child.text && child.text.includes("Total EPI")) {
-          totalLabel = child;
-          break;
+    //   for (let i = 0; i < children.length; i++) {
+    //     const child = children.getIndex(i);
+    //     if (child.text && child.text.includes("Total EPI")) {
+    //       totalLabel = child;
+    //       break;
+    //     }
+    //   }
+      
+    //   if (totalLabel) {
+    //     totalLabel.text = `Total EPI: ${totalValue.toFixed(2)} units`;
+    //   }
+      
+    //   // Force redraw
+    //   chartInstances.epiChart.invalidateData();
+    // }
+    
+    // Fix the EPI refresh logic
+if (chartInstances.epiChart) {
+  // For ApexCharts, update the series and options
+  await chartInstances.epiChart.updateSeries(newData.epi.percentValues);
+  
+  // Update the chart options with new data
+  await chartInstances.epiChart.updateOptions({
+    labels: newData.epi.labels,
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            value: {
+              formatter: () => newData.epi.totalEPI.toFixed(2)
+            },
+            total: {
+              formatter: () => newData.epi.totalEPI.toFixed(2) + " units"
+            }
+          }
         }
       }
-      
-      if (totalLabel) {
-        totalLabel.text = `Total EPI: ${totalValue.toFixed(2)} units`;
-      }
-      
-      // Force redraw
-      chartInstances.epiChart.invalidateData();
     }
-    
+  });
+}
+
     if (chartInstances.waterChart) {
       chartInstances.waterChart.data = water;
       chartInstances.waterChart.invalidateData();
@@ -1867,7 +2167,7 @@ if (chartInstances.aqiCharts) {
     } catch (error) {
       console.error('Error during refresh:', error);
     }
-  }, 10000);
+  }, 50000);
 
   // Cleanup on page exit
   window.addEventListener('beforeunload', () => {

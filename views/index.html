@@ -1,0 +1,991 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Niagara Dashboard</title>
+  <link rel="stylesheet" href="/css/sb-admin-2.min.css">
+</head>
+<body>
+  <h1 style="text-align:center;">🌐 Niagara Cloud Dashboard</h1>
+  <div id="chart-container" style="text-align:center; margin-top: 50px;">
+    <p>Data will load here...</p>
+  </div>
+
+  <script>
+    fetch('/dashboard-data')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('chart-container').innerText = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        document.getElementById('chart-container').innerText = 'Error loading data: ' + err.message;
+      });
+  </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barclays Dashboard</title>
+    <link rel="stylesheet" href="/css/custom-style.css">
+    <!-- <link rel="stylesheet" href="public/css/custom-style.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/cupertino/jquery-ui.css">
+    <link
+      href="/vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link href="/fonts/Poppins/stylesheet.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="/css/custome-white.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+</head>
+<body id="page-top" class="page-overview sidebar-toggled">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+
+        <div id="content-wrapper" class="d-flex flex-column">
+          <!-- Main Content -->
+          <div id="content">
+            <!-- Topbar -->
+            <nav class="navbar-expand navbar-light bg-white topbar mb-4 static-top shadow d-flex justify-content-evenly">
+              <a class="navbar-brand d-flex justify-content-between py-3" href="#">
+                  <img src="/Img/logo-light.png" alt="Logo" class="d-inline-block align-top" style="max-height: 40px;">
+              </a>
+              <div class="d-flex align-items-center justify-content-between">
+                  <h2 class="me-2 fw-bold text-primari">WORKPLACE OS</h2>
+                  <h5 class="text-secondary pt-3">Smart building insights</h5>
+              </div>
+              <!-- <a class="navbar-brand d-flex justify-content-between py-3" href="#">
+                  <img src="/Img/space.png" alt="Logo" class="d-inline-block align-top" style="max-height: 40px;">
+              </a> -->
+          </nav>
+            <!-- End of Topbar -->
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+              <!-- Modal -->
+              <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header" style="border-bottom: none;">
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center popup_box"> <!-- Center the content -->
+                      <i class="fas fa-exclamation"></i>
+                      <h1 id="modalMessage">Start Date ANd End Date Cant Not Be Same</h1>
+                      <div class="mt-1">
+                        <p id="modalMessage1">Please select proper dates.</p> <!-- Instruction message -->
+                      </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: none;">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Content Row -->
+              <div class="row">
+                <div class="col-xl-12 col-lg-5 small-boxes">
+                  <!-- Earnings (Monthly) Card Example -->
+                  <div class="row">
+                    <div class="col-xl-3 col-md-4 mb-4">
+                      <div class="card-co2 rounded shadow h-100 py-2">
+                        <div class="card-body VrtCenter">
+                          <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                              <div
+                                class="text-xs font-weight-bold text-kpi  text-uppercase mb-1"
+                              >
+                                Total Co2 Emission 
+                              </div>
+                              <div class="h5 mb-0 font-weight-bold text-white" id="co2-value">
+                                2.54 ton
+                              </div>
+                            </div>
+                            <div class="col-auto">
+                              <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-md-4 mb-4">
+                      <div class="card-dom-water rounded shadow h-100 py-2">
+                        <div class="card-body VrtCenter">
+                          <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                              <div class="text-xs font-weight-bold text-kpi text-uppercase mb-1">
+                                Total Domestic Water Used
+                              </div>
+                              <div class="h5 mb-0 font-weight-bold text-white" id="dom-water-value">
+                                10 liters
+                              </div>
+                            </div>
+                            <div class="col-auto">
+                              <i
+                                class="fas fa-tint fa-2x text-white" 
+                              ></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-3 col-md-4 mb-4">
+                      <div class="card-flu-water rounded shadow h-100 py-2">
+                        <div class="card-body VrtCenter">
+                          <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                              <div
+                                class="text-xs font-weight-bold text-kpi text-uppercase mb-1"
+                              >
+                                Total Flushing Water Used
+                              </div>
+                              <div class="h5 mb-0 font-weight-bold text-white"  id="flu-water-value">
+                                20 liters
+                              </div>
+                            </div>
+                            <div class="col-auto">
+                              <i
+                                class="fas fa-chart-line fa-2x text-white"
+                              ></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+  
+                    <!-- Pending Requests Card Example -->
+                    <div class="col-xl-3 col-md-4 mb-4">
+                      <div class="card-power rounded shadow h-100 py-2">
+                        <div class="card-body VrtCenter">
+                          <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                              <div
+                                class="text-xs font-weight-bold text-kpi text-uppercase mb-1"
+                              >
+                                Total Power Consumption
+                              </div>
+                              <div class="h5 mb-0 font-weight-bold text-white" id="power-value">
+                                1350 Kwh
+                              </div>
+                            </div>
+                            <div class="col-auto">
+                              <i
+                                class="fas fa-bolt fa-2x text-white"
+                              ></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="row">
+                <!-- CO2 Emission Chart -->
+                <div class="col-xl-4 col-lg-4">
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">CO2 Emission in Ton / User</h6> 
+                    </div>
+                      <div class="card-body">
+                        <div class="chart-area">
+                          <div id="chartdiv"></div>
+                        </div>
+                        <div class="mb-3">
+                          <div class="d-flex">
+                            <div class="form-group mb-2 me-2" style="margin-right: 1rem;">
+                              <label for="startDate" class="me-2">Start Date:</label>
+                              <input type="date" id="startDate" class="form-control form-control-sm" style="width: 150px;" title="">
+                            </div>
+                            <div class="form-group mb-2">
+                              <label for="endDate" class="me-2">End Date:</label>
+                              <input type="date" id="endDate" class="form-control form-control-sm" style="width: 150px;" title="">
+                            </div>
+                        </div>
+                          <div class="d-flex mt-2">
+                            <button id="sav_daily_btn" class="chart-button mx-1">Daily</button>
+                            <button id="sav_monthly_btn" class="chart-button mx-1">Monthly</button>
+                            <button id="sav_yearly_btn" class="chart-button mx-1">Yearly</button>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Water Consumption Chart -->
+                <div class="col-xl-4 col-lg-4">
+                  <div class="card shadow mb-4">
+                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                          <h6 class="m-0 font-weight-bold text-primary">Water Consumption Per User</h6>
+                      </div>
+                      <div class="card-body">
+                          <div class="chart-area">
+                              <div id="chartdiv1"></div>
+                          </div>
+                          <div class="mb-3">
+                              <div class="d-flex">
+                                  <div class="form-group mb-2 me-2" style="margin-right: 1rem;">
+                                      <label for="startDateWater" class="me-2">Start Date:</label>
+                                      <input type="date" id="startDateWater" class="form-control form-control-sm" style="width: 150px;">
+                                  </div>
+                                  <div class="form-group mb-2">
+                                      <label for="endDateWater" class="me-2">End Date:</label>
+                                      <input type="date" id="endDateWater" class="form-control form-control-sm" style="width: 150px;">
+                                  </div>
+                              </div>
+                              <div class="d-flex mt-2">
+                                  <button id="sav_daily_water" class="chart-button mx-1">Daily</button>
+                                  <button id="sav_monthly_water" class="chart-button mx-1">Monthly</button>
+                                  <button id="sav_yearly_water" class="chart-button mx-1">Yearly</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              
+                <!-- Power Consumption Chart -->
+                <div class="col-xl-4 col-lg-4">
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Power Consumption</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="chart-area">
+                        <div id="chartdiv2" class="d-inline-block ct-perfect-fourth"></div>
+                      </div>
+                      <div class="mb-3">
+                        <div class="d-flex">
+                          <div class="form-group mb-2 me-2" style="margin-right: 1rem;">
+                            <label for="startDatePower" class="me-2">Start Date:</label>
+                            <input type="date" id="startDatePower" class="form-control form-control-sm" style="width: 150px;">
+                          </div>
+                          <div class="form-group mb-2">
+                            <label for="endDatePower" class="me-2">End Date:</label>
+                            <input type="date" id="endDatePower" class="form-control form-control-sm" style="width: 150px;">
+                          </div>
+                        </div>
+                        <div class="d-flex mt-2">
+                          <button id="sav_daily_power" class=" power chart-button mx-1">Daily</button>
+                          <button id="sav_monthly_power" class="chart-button mx-1">Monthly</button>
+                          <button id="sav_yearly_power" class="power chart-button mx-1">Yearly</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <!-- Occupancy Efficiency Chart -->
+                <div class="col-xl-4 col-lg-4">
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Occupancy Efficiency (%)</h6>
+                      <div id="button-sec">
+                        <button
+                          id="floor_sav_btn"
+                          title="Show Floor Wise"
+                          class="chart-button"
+                        >
+                          <i class="fas fa-fw fa-chart-bar"></i>
+                        </button>
+                        <button
+                          id="build_sav_btn"
+                          title="Show Current Building"
+                          class="chart-button"
+                        >
+                          <i class="fas fa-fw fa-tachometer-alt"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body ">
+                      <div class="chart-area sav_g_chart">
+                        <div id="chartdiv3"></div>
+                      </div>
+                      <div class="chart-area sav_b_chart">
+                        <div id="chartdiv9"></div>
+                      </div>
+                      <div class="mb-3">
+                        <div class="d-flex">
+                          <div class="form-group mb-2 me-2" style="margin-right: 1rem;">
+                            <label for="startDateOccupancy" class="me-2">Start Date:</label>
+                            <input type="date" id="startDateOccupancy" class="form-control form-control-sm" style="width: 150px;">
+                          </div>
+                          <div class="form-group mb-2">
+                            <label for="endDateOccupancy" class="me-2">End Date:</label>
+                            <input type="date" id="endDateOccupancy" class="form-control form-control-sm" style="width: 150px;">
+                          </div>
+                        </div>
+                        <div class="d-flex mt-2">
+                          <button id="sav_daily_occupancy" class="occupancy chart-button mx-1" >Daily</button>
+                          <button id="sav_monthly_occupancy" class="chart-button mx-1" >Monthly</button>
+                          <button id="sav_yearly_occupancy" class="occupancy chart-button mx-1">Yearly</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+                <!-- Indoor Air Quality Chart -->
+                <div class="col-xl-4 col-lg-4">
+                  <div class="card shadow mb-4">
+                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                          <h6 class="m-0 font-weight-bold text-primary">Indoor Air Quality</h6>
+                          <div id="button-sec">
+                              <button
+                                  id="aqiFloor1"
+                                  title="Show Floor Wise"
+                                  class="chart-button"
+                                  aria-label="Show Floor Wise"
+                              >
+                                  <i class="fas fa-fw fa-chart-bar"></i>
+                              </button>
+                              <button
+                                  id="aqiFloor2"
+                                  title="Show Current Building"
+                                  class="chart-button"
+                                  aria-label="Show Current Building"
+                              >
+                                  <i class="fas fa-fw fa-tachometer-alt"></i>
+                              </button>
+                          </div>
+                      </div>
+                      <div class="card-body">
+                          <div class="chart-area aqiAvg">
+                              <div id="chartdiv4" class="d-inline-block"></div>
+                          </div>
+                          <div class="chart-area aqiSeparate">
+                              <div class="d-flex justify-content-between">
+                                <div class="aqiChart border" id="completionRateChart"></div>
+                              <div class="aqiChart border" id="bounceRateChart"></div>
+                              </div>
+                          </div>
+                          <div class="mb-3">
+                              <div class="d-flex">
+                                  <div class="form-group mb-2 me-2" style="margin-right: 1rem;">
+                                      <label for="startDateIAQ" class="me-2">Start Date:</label>
+                                      <input type="date" id="startDateIAQ" class="form-control form-control-sm" style="width: 150px;">
+                                  </div>
+                                  <div class="form-group mb-2">
+                                      <label for="endDateIAQ" class="me-2">End Date:</label>
+                                      <input type="date" id="endDateIAQ" class="form-control form-control-sm" style="width: 150px;">
+                                  </div>
+                              </div>
+                              <div class="d-flex mt-2">
+                                  <button id="sav_daily_iaq" class="chart-button mx-1">Daily</button>
+                                  <button id="sav_monthly_iaq" class="chart-button mx-1">Monthly</button>
+                                  <button id="sav_yearly_iaq" class="chart-button mx-1">Yearly</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              
+                <!-- Energy Performance Index Chart -->
+                <div class="col-xl-4 col-lg-4">
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Energy Performance Index (EPI)</h6>
+                      <div id="button-sec">
+                        <button
+                            id="epiFloor1"
+                            title="Show Floor Wise"
+                            class="chart-button"
+                            aria-label="Show Floor Wise"
+                        >
+                            <i class="fas fa-fw fa-chart-bar"></i>
+                        </button>
+                        <button
+                            id="epiFloor2"
+                            title="Show Current Building"
+                            class="chart-button"
+                            aria-label="Show Current Building"
+                        >
+                            <i class="fas fa-fw fa-tachometer-alt"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="chart-area epiDonut mb-0">
+                        <div id="chartdiv5" class="d-inline-block"></div>
+                      </div>
+                      <div class="chart-area epiBar">
+                          <div class="epiChart" id="epiBarChart"></div>
+                      </div>
+                      <div class="mb-1 mt-0 pt-0">
+                        <div class="d-flex">
+                          <div class="form-group mb-2 me-2" style="margin-right: 1rem;">
+                            <label for="startDateEPI" class="me-2">Start Date:</label>
+                            <input type="date" id="startDateEPI" class="form-control form-control-sm" style="width: 150px;">
+                          </div>
+                          <div class="form-group mb-2">
+                            <label for="endDateEPI" class="me-2">End Date:</label>
+                            <input type="date" id="endDateEPI" class="form-control form-control-sm" style="width: 150px;">
+                          </div>
+                        </div>
+                        <div class="d-flex mt-2">
+                          <button id="sav_daily_epi" class="chart-button mx-1" >Daily</button>
+                          <button id="sav_monthly_epi" class="chart-button mx-1">Monthly</button>
+                          <button id="sav_yearly_epi" class="chart-button mx-1">Yearly</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- End of Main Content -->
+  
+          <!-- Footer -->
+          <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+              <div class="copyright text-center my-auto">
+                <span>Copyright &copy; Your Website 2022</span>
+              </div>
+            </div>
+          </footer>
+          <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+      </div>
+    
+      <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/themes/dark.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/lang/es_ES.js"></script>
+      <script src="https://cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
+      <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+      <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+      <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+      <script src="https://www.amcharts.com/lib/3/themes/black.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.38.0/apexcharts.min.js"></script>
+      <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> 
+      <script  src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+      <!-- CO2 Emission Donut Chart -->
+<script src="/js/demo.js"></script>
+
+   <script>
+    
+        var emissionChart;
+
+function pieChart(pointsData) {
+    if (emissionChart) emissionChart.destroy();
+
+    const seriesValues = pointsData.map(p => Number(p.value) || 0);
+
+    const options = {
+        series: seriesValues,
+        chart: { height: '100%', type: 'radialBar' },
+        plotOptions: {
+            radialBar: {
+                startAngle: -180,
+                endAngle: 90,
+                hollow: { size: '50%' },
+                dataLabels: {
+                    name: { show: true },
+                    value: { show: true },
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        formatter: function(w) {
+                            return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                        }
+                    }
+                }
+            }
+        },
+        labels: pointsData.map(p => p.name),
+        colors: ["#FFB22C", "#A4CE95", "#FFD93D", "#5C6BC0", "#FF7043"],
+        legend: { show: true, position: 'right', floating: true },
+        tooltip: {
+            enabled: true,
+            custom: function({ series, seriesIndex, w }) {
+                const name = w.globals.labels[seriesIndex];
+                const value = series[seriesIndex];
+                return `<div style="background:#F7F7F7;padding:8px;border-radius:4px;color:#000;">
+                            <strong>${name}</strong>: ${value}
+                        </div>`;
+            }
+        }
+    };
+
+    emissionChart = new ApexCharts(document.querySelector("#chartdiv"), options);
+    emissionChart.render();
+}
+
+// SSE listener
+const evtSource = new EventSource('/api/stream-points');
+evtSource.onmessage = function(event) {
+    const points = JSON.parse(event.data);
+    pieChart(points); // live update
+};
+
+var waterChart;
+
+function pieChart1(pointsData) {
+    am4core.ready(function () {
+        am4core.useTheme(am4themes_animated);
+
+        if (waterChart) {
+            waterChart.dispose(); // destroy previous instance
+        }
+
+        waterChart = am4core.create("chartdiv1", am4charts.PieChart);
+
+        // Map pointsData to chart data
+        waterChart.data = pointsData.map(p => ({
+            country: p.name.includes('DOMESTIC') ? 'Domestic' : 'Flushing',
+            litres: Number(p.value) || 0
+        }));
+
+        var pieSeries = waterChart.series.push(new am4charts.PieSeries());
+        pieSeries.dataFields.value = "litres";
+        pieSeries.dataFields.category = "country";
+
+        pieSeries.slices.template.stroke = am4core.color("transparent");
+        pieSeries.slices.template.strokeOpacity = 0;
+        pieSeries.colors.list = [
+            am4core.color("#C65BCF"), 
+            am4core.color("#39A7FF")
+        ];
+
+        pieSeries.ticks.template.disabled = true;
+        pieSeries.alignLabels = false;
+        pieSeries.labels.template.text = "{value.percent.formatNumber('#.0')}%";
+        pieSeries.labels.template.radius = am4core.percent(-40);
+        pieSeries.labels.template.fill = am4core.color("#000000");
+
+        pieSeries.hiddenState.properties.opacity = 1;
+        pieSeries.hiddenState.properties.endAngle = -90;
+        pieSeries.hiddenState.properties.startAngle = -90;
+        waterChart.hiddenState.properties.radius = am4core.percent(-40);
+
+        waterChart.legend = new am4charts.Legend();
+        waterChart.legend.position = "top";
+        waterChart.legend.labels.template.maxWidth = 100;
+        waterChart.legend.labels.template.text = "{country}: {litres} L";
+        waterChart.legend.labels.template.interactionsEnabled = false;
+        waterChart.legend.labels.template.fill = am4core.color("#000000");
+        waterChart.legend.layout = "horizontal";
+        waterChart.legend.itemContainers.template.paddingBottom = 10;
+        waterChart.legend.itemContainers.template.align = "center";
+        waterChart.legend.itemContainers.template.valign = "middle";
+        waterChart.legend.contentAlign = "center";
+        waterChart.logo.disabled = true;
+    });
+}
+
+// SSE for water chart
+const waterEvtSource = new EventSource('/api/stream-water');
+waterEvtSource.onmessage = function(event) {
+    const points = JSON.parse(event.data);
+    pieChart1(points); // update chart live
+};
+
+
+var occupancyChart;
+
+function donutChart(pointsData) {
+    // Get the occupancy value (first point)
+    const occupancyValue = pointsData.length ? Number(pointsData[0].value) : 0;
+
+    var options = {
+        series: [occupancyValue],
+        chart: {
+            height: 280,
+            width: "100%",
+            type: 'radialBar',
+        },
+        plotOptions: {
+            radialBar: {
+                hollow: {
+                    margin: 15,
+                    size: '90%',
+                },
+                dataLabels: {
+                    name: {
+                        show: true,
+                        color: '#000',
+                    },
+                    value: {
+                        show: true,
+                        color: '#000',
+                        offsetY: 50,
+                        fontSize: '50px',
+                    },
+                },
+                track: {
+                    background: '#494949',
+                    strokeWidth: '10%',
+                    margin: 0,
+                    dropShadow: {
+                        enabled: true,
+                        top: -3,
+                        left: 0,
+                        blur: 4,
+                        opacity: 0.35,
+                    },
+                },
+                offsetY: 30,
+            },
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shade: 'dark',
+                type: 'vertical',
+                gradientToColors: ['#e33b29','#ff00e0','#0000ff'],
+                stops: [0, 2, 70, 100],
+                colorStops: [
+                    { offset: 0, color: '#e33b29', opacity: 1 },
+                    { offset: 2, color: '#e33b29', opacity: 1 },
+                    { offset: 70, color: '#ff00e0', opacity: 1 },
+                    { offset: 100, color: '#0000ff', opacity: 1 }
+                ]
+            },
+        },
+        stroke: { lineCap: 'round' },
+        labels: ["Occupancy Efficiency"],
+    };
+
+    if (occupancyChart) occupancyChart.destroy();
+    occupancyChart = new ApexCharts(document.querySelector("#chartdiv3"), options);
+    occupancyChart.render();
+}
+
+// SSE for Occupancy
+const occupancyEvtSource = new EventSource('/api/stream-occupancy');
+occupancyEvtSource.onmessage = function(event) {
+    const points = JSON.parse(event.data);
+    donutChart(points); // live update
+};
+
+var aqiCharts;
+
+function createPieChart(pointsData) {
+    // Get IAQ value
+    const iaqValue = pointsData.length ? Number(pointsData[0].value) : 0;
+
+    const style = document.createElement('style');
+    style.innerHTML = `
+        #chartdiv4 .apexcharts-text {
+            fill: #000000;
+            font-weight: bold;
+        }
+    `;
+    document.head.appendChild(style);
+
+    var options = {
+        series: [iaqValue],
+        chart: {
+            height: 290,
+            type: 'radialBar',
+        },
+        plotOptions: {
+            radialBar: {
+                offsetY: 30,
+                startAngle: 0,
+                endAngle: 360,
+                hollow: {
+                    margin: 5,
+                    size: '65%',
+                    background: 'transparent',
+                },
+                dataLabels: {
+                    name: { show: true },
+                    value: { show: true },
+                    total: {
+                        show: true,
+                        label: 'AQI',
+                        fontSize: '30px',
+                        fontWeight: 'bold',
+                        color: '#000000',
+                        formatter: function (w) {
+                            const totalValue = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                            return totalValue + " Good";
+                        }
+                    }
+                },
+                track: {
+                    background: '#2F5AD0',
+                }
+            }
+        },
+        colors: ["#FF6600"],
+        labels: ['AQI'],
+        legend: {
+            show: true,
+            floating: true,
+            fontSize: '16px',
+            position: 'top',
+            horizontalAlign: 'center',
+            offsetY: 1,
+            labels: { useSeriesColors: true },
+            markers: { size: 0 },
+            formatter: function(seriesName, opts) {
+                return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex];
+            },
+            itemMargin: { vertical: 3 }
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: { legend: { show: false } }
+        }]
+    };
+
+    if (aqiCharts) aqiCharts.destroy();
+    aqiCharts = new ApexCharts(document.querySelector("#chartdiv4"), options);
+    aqiCharts.render();
+}
+
+// SSE listener for IAQ
+const iaqEvtSource = new EventSource('/api/stream-iaq');
+iaqEvtSource.onmessage = function(event) {
+    const points = JSON.parse(event.data);
+    createPieChart(points); // live update
+};
+
+var epiChart;
+
+function epiDonutChart(pointsData) {
+    console.log("epiDonutChart() updating with data:", pointsData);
+
+    // Convert string -> number
+    const total = Number(pointsData.find(p => p.name === "TotalEPI")?.value || 0);
+    const hvac  = Number(pointsData.find(p => p.name === "EPI_HVAC")?.value || 0);
+    const ups   = Number(pointsData.find(p => p.name === "EPI_UPS")?.value || 0);
+    const rpltg = Number(pointsData.find(p => p.name === "EPI_RP_LTG")?.value || 0);
+
+    if (!total || total === 0) {
+        console.warn("No TotalEPI value, chart not rendered");
+        return;
+    }
+
+    // Destroy old chart before re-render
+    if (epiChart) epiChart.dispose();
+
+    am4core.useTheme(am4themes_animated);
+    epiChart = am4core.create("chartdiv5", am4charts.PieChart);
+
+    // Pass absolute values, amCharts handles % calculation internally
+    epiChart.data = [
+        { category: "HVAC", value: hvac },
+        { category: "UPS", value: ups },
+        { category: "RP_LTG", value: rpltg }
+    ];
+
+    epiChart.innerRadius = am4core.percent(45);
+    epiChart.radius = am4core.percent(85);
+
+    var pieSeries = epiChart.series.push(new am4charts.PieSeries());
+    pieSeries.dataFields.value = "value";
+    pieSeries.dataFields.category = "category";
+    pieSeries.slices.template.tooltipText = "{category}: {value}";
+
+    pieSeries.colors.list = [
+        am4core.color("#FFB200"),
+        am4core.color("#667BC6"),
+        am4core.color("#D1E9F6")
+    ];
+
+    epiChart.legend = new am4charts.Legend();
+    epiChart.legend.position = "top";
+    epiChart.legend.layout = "horizontal";
+
+    // Center label
+    var labelTotal = epiChart.seriesContainer.createChild(am4core.Label);
+    labelTotal.text = `Total EPI\n${total}`;
+    labelTotal.horizontalCenter = "middle";
+    labelTotal.verticalCenter = "middle";
+    labelTotal.fontSize = 20;
+    labelTotal.fontWeight = "bold";
+}
+
+
+// function epiDonutChart(pointsData) {
+//     // Extract values
+//     const hvac = Number(pointsData.find(p => p.name.includes("EPI_HVAC"))?.value || 0);
+//     const ups  = Number(pointsData.find(p => p.name.includes("EPI_UPS"))?.value || 0);
+//     const rpltg = Number(pointsData.find(p => p.name.includes("EPI_RP_LTG"))?.value || 0);
+//     const total = Number(pointsData.find(p => p.name.includes("TotalEpi"))?.value || 0);
+
+//     if (!total || total === 0) return;
+
+//     const percentages = [
+//         ((hvac / total) * 100).toFixed(2),
+//         ((ups / total) * 100).toFixed(2),
+//         ((rpltg / total) * 100).toFixed(2)
+//     ].map(Number);
+
+//     // Destroy old chart if exists
+//     if (epiChart) epiChart.dispose();
+
+//     am4core.useTheme(am4themes_animated);
+//     epiChart = am4core.create("chartdiv5", am4charts.PieChart);
+
+//     epiChart.data = [
+//         { category: 'HVAC', value: percentages[0], realValue: hvac },
+//         { category: 'UPS', value: percentages[1], realValue: ups },
+//         { category: 'RP_LTG', value: percentages[2], realValue: rpltg }
+//     ];
+
+//     epiChart.innerRadius = am4core.percent(45);
+//     epiChart.radius = am4core.percent(85);
+
+//     var pieSeries = epiChart.series.push(new am4charts.PieSeries());
+//     pieSeries.dataFields.value = "value";
+//     pieSeries.dataFields.category = "category";
+//     pieSeries.slices.template.tooltipText = "{category}: {value}% ({realValue})";
+
+//     pieSeries.colors.list = [
+//         am4core.color("#FFB200"),
+//         am4core.color("#667BC6"),
+//         am4core.color("#D1E9F6")
+//     ];
+
+//     epiChart.legend = new am4charts.Legend();
+//     epiChart.legend.position = "top";
+//     epiChart.legend.layout = "horizontal";
+//     epiChart.legend.labels.template.fill = am4core.color("#000");
+
+//     // Center Label
+//     var labelTotal = epiChart.seriesContainer.createChild(am4core.Label);
+//     labelTotal.text = `Total EPI - ${total}`;
+//     labelTotal.horizontalCenter = "middle";
+//     labelTotal.verticalCenter = "middle";
+//     labelTotal.fontSize = 20;
+//     labelTotal.fontWeight = "bold";
+//     labelTotal.fill = am4core.color("#000");
+// }
+
+// function epiDonutChart() {
+//   console.log("epiDonutChart() called ✅");
+
+//   am4core.useTheme(am4themes_animated);
+//   const chart = am4core.create("chartdiv5", am4charts.PieChart);
+//   chart.innerRadius = am4core.percent(45);
+
+//   chart.data = [
+//     { category: "HVAC", value: 40, realValue: 40 },
+//     { category: "UPS", value: 30, realValue: 30 },
+//     { category: "RP_LTG", value: 30, realValue: 30 }
+//   ];
+
+//   const pieSeries = chart.series.push(new am4charts.PieSeries());
+//   pieSeries.dataFields.value = "value";
+//   pieSeries.dataFields.category = "category";
+//   pieSeries.slices.template.tooltipText = "{category}: {value}% ({realValue})";
+// }
+
+// document.addEventListener("DOMContentLoaded", epiDonutChart);
+
+// SSE listener for EPI
+const epiEvtSource = new EventSource('/api/stream-epi');
+epiEvtSource.onmessage = function(event) {
+    const points = JSON.parse(event.data);
+    epiDonutChart(points); // live update
+};
+
+// async function lineChart5(cloudId) {
+//     try {
+//         // Fetch telemetry from your server endpoint
+//         const response = await fetch(`/api/telemetry/${cloudId}`);
+//         const data = await response.json();
+//         console.log("Raw Niagara response:", response.data);
+
+
+//         if (!data || !data.length) {
+//             console.warn("No data available for chartdiv2");
+//             return;
+//         }
+
+//         const times = data.map(d => d.time);
+//         const values = data.map(d => d.value);
+
+//         am4core.ready(function () {
+//             am4core.useTheme(am4themes_animated);
+
+//             const powerChart = am4core.create("chartdiv2", am4charts.XYChart);
+
+//             // Prepare chart data
+//             powerChart.data = data.map(d => ({ time: d.time, value: d.value }));
+
+//             // Category Axis (X)
+//             const categoryAxis = powerChart.xAxes.push(new am4charts.CategoryAxis());
+//             categoryAxis.dataFields.category = "time";
+//             categoryAxis.renderer.labels.template.fill = am4core.color("#000");
+//             categoryAxis.renderer.labels.template.rotation = 315;
+//             categoryAxis.renderer.labels.template.horizontalCenter = "right";
+//             categoryAxis.renderer.labels.template.verticalCenter = "middle";
+//             categoryAxis.renderer.minGridDistance = 1;
+//             categoryAxis.renderer.labels.template.dy = -15;
+//             categoryAxis.renderer.labels.template.fontSize = 10;
+//             categoryAxis.renderer.labels.template.dx = 10;
+
+//             // Value Axis (Y)
+//             const valueAxis = powerChart.yAxes.push(new am4charts.ValueAxis());
+//             valueAxis.renderer.labels.template.fill = am4core.color("#000");
+
+//             // Line Series
+//             const lineSeries = powerChart.series.push(new am4charts.LineSeries());
+//             lineSeries.dataFields.valueY = "value";
+//             lineSeries.dataFields.categoryX = "time";
+//             lineSeries.strokeWidth = 2;
+//             lineSeries.stroke = am4core.color("#FC4100");
+
+//             // Tooltip
+//             lineSeries.tooltipText = "Power: [bold]{valueY}[/]";
+//             lineSeries.tooltip.getFillFromObject = false;
+//             lineSeries.tooltip.background.fill = am4core.color("#FC4100");
+//             lineSeries.tooltip.label.fill = am4core.color("#fff");
+//             lineSeries.tooltip.pointerOrientation = "horizontal";
+
+//             // Cursor and zoom
+//             powerChart.cursor = new am4charts.XYCursor();
+//             powerChart.cursor.behavior = "zoomXY";
+
+//             // Disable default scrollbar
+//             powerChart.scrollbarX = new am4core.Scrollbar();
+//             powerChart.scrollbarX.disabled = true;
+
+//             powerChart.logo.disabled = true;
+//         });
+
+//     } catch (err) {
+//         console.error("❌ Error in lineChart5:", err);
+//     }
+// }
+
+document.addEventListener("DOMContentLoaded", () => {
+    createChart("8a6cd4ea-0b07-4749-85e3-6bbbf78b4a97", "chartdiv2", "#FC4100");
+});
+
+
+      </script>
+</body>
+</html>
